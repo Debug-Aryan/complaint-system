@@ -18,4 +18,11 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
 
     // For Admins: Get all complaints across the system, newest first
     List<Complaint> findAllByOrderByCreatedAtDesc();
+
+    // For Admin Dashboard Stats
+    long countByStatus(ComplaintStatus status);
+
+    // For Admin Manage Complaints (Filters)
+    List<Complaint> findByCategoryIdOrderByCreatedAtDesc(Integer categoryId);
+    List<Complaint> findByStatusAndCategoryIdOrderByCreatedAtDesc(ComplaintStatus status, Integer categoryId);
 }
