@@ -1,8 +1,8 @@
 package com.project.complaintsystem.controller;
 
+import com.project.complaintsystem.security.CustomUserDetails;
 import com.project.complaintsystem.service.ComplaintService;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,31 +12,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private ComplaintService complaintService;
+    private final ComplaintService complaintService;
+
+    public UserController(ComplaintService complaintService) {
+        this.complaintService = complaintService;
+    }
 
     @GetMapping("/dashboard")
-    public String showDashboard(HttpSession session, Model model) {
-        if (isUserAuthenticated(session)) return "redirect:/login";
-
-        Long userId = (Long) session.getAttribute("userId");
+    public String showDashboard(@AuthenticationPrincipal CustomUserDetails principal, Model model) {
+        Long userId = principal.getId();
         model.addAttribute("recentComplaints", complaintService.getUserComplaints(userId));
 
         return "user/dashboard";
     }
 
     @GetMapping("/complaints")
-    public String showMyComplaints(HttpSession session, Model model) {
-        if (isUserAuthenticated(session)) return "redirect:/login";
-
-        Long userId = (Long) session.getAttribute("userId");
+    public String showMyComplaints(@AuthenticationPrincipal CustomUserDetails principal, Model model) {
+        Long userId = principal.getId();
         model.addAttribute("complaints", complaintService.getUserComplaints(userId));
 
         return "user/my-complaints";
-    }
-
-    // Helper for session validation
-    private boolean isUserAuthenticated(HttpSession session) {
-        return session == null || session.getAttribute("userId") == null || !"USER".equals(session.getAttribute("role"));
     }
 }

@@ -3,27 +3,28 @@ package com.project.complaintsystem.serviceImpl;
 import com.project.complaintsystem.enums.UserRole;
 import com.project.complaintsystem.exception.BadRequestException;
 import com.project.complaintsystem.exception.ResourceNotFoundException;
-import com.project.complaintsystem.exception.UnauthorizedException;
 import com.project.complaintsystem.model.Role;
 import com.project.complaintsystem.model.User;
 import com.project.complaintsystem.repository.RoleRepository;
 import com.project.complaintsystem.repository.UserRepository;
 import com.project.complaintsystem.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder; // You will need to define this as a Bean in SecurityConfig
+    public AuthServiceImpl(UserRepository userRepository,
+                           RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public User registerUser(User user) {
@@ -42,20 +43,5 @@ public class AuthServiceImpl implements AuthService {
 
         // 4. Save and return user
         return userRepository.save(user);
-    }
-
-    @Override
-    public User loginUser(String email, String rawPassword) {
-        // 1. Find user by email
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with this email."));
-
-        // 2. Compare password (Input password vs encrypted password)
-        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-            throw new UnauthorizedException("Invalid email or password.");
-        }
-
-        // 3. Return user object (The controller will handle session storage)
-        return user;
     }
 }

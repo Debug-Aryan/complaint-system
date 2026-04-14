@@ -4,8 +4,9 @@ import com.project.complaintsystem.model.Complaint;
 import com.project.complaintsystem.service.CategoryService;
 import com.project.complaintsystem.service.ComplaintService;
 import com.project.complaintsystem.dto.ComplaintDTO;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.project.complaintsystem.security.CustomUserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +17,16 @@ import java.util.Map;
 @RequestMapping("/complaints")
 public class ComplaintController {
 
-    @Autowired
-    private ComplaintService complaintService;
+    private final ComplaintService complaintService;
+    private final CategoryService categoryService;
 
-    @Autowired
-    private CategoryService categoryService;
+    public ComplaintController(ComplaintService complaintService, CategoryService categoryService) {
+        this.complaintService = complaintService;
+        this.categoryService = categoryService;
+    }
 
     @GetMapping("/submit")
-    public String showSubmitForm(HttpSession session, Model model) {
-        if (session.getAttribute("userId") == null) return "redirect:/login";
-
+    public String showSubmitForm(Model model) {
         model.addAttribute("complaint", new Complaint());
         model.addAttribute("categories", categoryService.getAllCategories());
 
@@ -35,10 +36,9 @@ public class ComplaintController {
     @PostMapping("/submit")
     public String submitComplaint(@ModelAttribute Complaint complaint,
                                   @RequestParam Integer categoryId,
-                                  HttpSession session) {
+                                  @AuthenticationPrincipal CustomUserDetails principal) {
 
-        Long userId = (Long) session.getAttribute("userId");
-        if (userId == null) return "redirect:/login";
+        Long userId = principal.getId();
 
         ComplaintDTO dto = new ComplaintDTO();
         dto.setTitle(complaint.getTitle());
@@ -52,18 +52,21 @@ public class ComplaintController {
     }
 
     @GetMapping("/{id}")
-    public String viewComplaintDetails(@PathVariable Long id, HttpSession session, Model model) {
-        if (session.getAttribute("userId") == null) return "redirect:/login";
+    public String viewComplaintDetails(@PathVariable Long id,
+                                       @AuthenticationPrincipal CustomUserDetails principal,
+                                       Authentication authentication,
+                                       Model model) {
 
         // Service returns complaint + timeline in a map
         Map<String, Object> details = complaintService.getComplaintDetails(id);
         Complaint complaint = (Complaint) details.get("complaint");
 
         // Security check: Ensure user owns this complaint OR user is an admin
-        Long sessionUserId = (Long) session.getAttribute("userId");
-        String role = (String) session.getAttribute("role");
+        Long currentUserId = principal.getId();
+        boolean isAdmin = authentication.getAuthorities().stream()
+            .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
 
-        if (!complaint.getUser().getId().equals(sessionUserId) && !"ADMIN".equals(role)) {
+        if (!complaint.getUser().getId().equals(currentUserId) && !isAdmin) {
             return "redirect:/user/dashboard";
         }
 
