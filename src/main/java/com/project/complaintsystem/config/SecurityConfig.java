@@ -2,12 +2,12 @@ package com.project.complaintsystem.config;
 
 import com.project.complaintsystem.security.CustomAuthenticationSuccessHandler;
 import com.project.complaintsystem.security.CustomUserDetailsService;
+import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,22 +24,29 @@ public class SecurityConfig {
                                            AuthenticationProvider authenticationProvider) throws Exception {
 
         http
-                .csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.ico", "/error").permitAll()
+                        // Important for JSP: view rendering is done via server FORWARD to /WEB-INF/**
+                        // If FORWARD isn't permitted, Spring Security can redirect back to /login and loop.
+                    .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
+
+                        // Public routes FIRST
+                        .requestMatchers("/login", "/register", "/error").permitAll()
+                        .requestMatchers("/favicon.ico", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+
+                        // Role-based routes
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("CITIZEN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .permitAll()
                         .loginProcessingUrl("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
                         .successHandler(successHandler)
                         .failureUrl("/login?error")
-                        .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -51,10 +58,17 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session
                         .sessionFixation(sessionFixation -> sessionFixation.migrateSession())
-                        .invalidSessionUrl("/login?invalid")
+                        // Create a new session and then redirect so stale JSESSIONID cookies don't loop forever
+                        .invalidSessionStrategy((request, response) -> {
+                            request.getSession(true);
+                            response.sendRedirect(request.getContextPath() + "/login?invalid");
+                        })
                         .maximumSessions(1)
                         .maxSessionsPreventsLogin(false)
-                        .expiredUrl("/login?expired")
+                        .expiredSessionStrategy(event -> {
+                            event.getRequest().getSession(true);
+                            event.getResponse().sendRedirect(event.getRequest().getContextPath() + "/login?expired");
+                        })
                 );
 
         return http.build();

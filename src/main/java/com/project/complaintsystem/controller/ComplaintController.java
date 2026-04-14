@@ -71,7 +71,8 @@ public class ComplaintController {
         }
 
         model.addAttribute("complaint", complaint);
+        model.addAttribute("updates", details.get("timeline"));
         model.addAttribute("timeline", details.get("timeline"));
-        return "shared/complaint-details";
+        return "user/complaint-details";
     }
 }

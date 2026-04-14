@@ -28,17 +28,24 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User registerUser(User user) {
+        return registerUser(user, UserRole.ROLE_CITIZEN);
+    }
+
+    @Override
+    public User registerUser(User user, UserRole role) {
         // 1. Validate input (Check if user already exists)
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new BadRequestException("Email is already registered!");
         }
 
-        // 2. Fetch default role (ROLE_CITIZEN)
-        Role citizenRole = roleRepository.findByRoleName(UserRole.ROLE_CITIZEN)
-                .orElseThrow(() -> new ResourceNotFoundException("Default role not found in database."));
+        UserRole effectiveRole = (role == null) ? UserRole.ROLE_CITIZEN : role;
+
+        // 2. Fetch selected role
+        Role selectedRole = roleRepository.findByRoleName(effectiveRole)
+                .orElseThrow(() -> new ResourceNotFoundException("Selected role not found in database."));
 
         // 3. Assign Role & Encrypt Password
-        user.setRole(citizenRole);
+        user.setRole(selectedRole);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // 4. Save and return user
