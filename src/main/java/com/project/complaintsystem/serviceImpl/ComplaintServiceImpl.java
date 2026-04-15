@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,5 +150,9 @@ public class ComplaintServiceImpl implements ComplaintService {
         if (currentStatus == ComplaintStatus.PENDING && newStatus == ComplaintStatus.RESOLVED) {
             throw new BadRequestException("Invalid transition. Complaint must be moved to IN_PROGRESS before being RESOLVED.");
         }
+    }
+    @Override
+    public List<Complaint> getComplaintsByDateRange(LocalDateTime start, LocalDateTime end) {
+        return complaintRepository.findByCreatedAtBetween(start, end);
     }
 }

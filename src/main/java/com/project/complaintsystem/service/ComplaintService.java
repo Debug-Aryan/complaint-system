@@ -5,6 +5,7 @@ import com.project.complaintsystem.enums.ComplaintStatus;
 import com.project.complaintsystem.model.Complaint;
 import com.project.complaintsystem.model.ComplaintUpdate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ public interface ComplaintService {
 
     // 🌐 Get All Complaints (Admin)
     List<Complaint> getAllComplaints(ComplaintStatus status);
+    List<Complaint> getComplaintsByDateRange(LocalDateTime start, LocalDateTime end);
 
     // 🔄 Update Complaint Status (Admin)
     Complaint updateComplaintStatus(Long complaintId, Long adminId, ComplaintStatus newStatus, String remarks);

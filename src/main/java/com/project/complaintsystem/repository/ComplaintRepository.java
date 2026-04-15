@@ -3,26 +3,82 @@ package com.project.complaintsystem.repository;
 import com.project.complaintsystem.enums.ComplaintStatus;
 import com.project.complaintsystem.model.Complaint;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
 
-    // For Citizens: Fetch all complaints they have submitted, newest first
+    // ================= EXISTING METHODS =================
+    List<Complaint> findAll();
     List<Complaint> findByUserIdOrderByCreatedAtDesc(Long userId);
 
-    // For Admins: Filter complaints by their current status (e.g., all PENDING)
     List<Complaint> findByStatus(ComplaintStatus status);
 
-    // For Admins: Get all complaints across the system, newest first
     List<Complaint> findAllByOrderByCreatedAtDesc();
+    List<Complaint> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
-    // For Admin Dashboard Stats
     long countByStatus(ComplaintStatus status);
 
-    // For Admin Manage Complaints (Filters)
     List<Complaint> findByCategoryIdOrderByCreatedAtDesc(Integer categoryId);
-    List<Complaint> findByStatusAndCategoryIdOrderByCreatedAtDesc(ComplaintStatus status, Integer categoryId);
+
+    List<Complaint> findByStatusAndCategoryIdOrderByCreatedAtDesc(
+            ComplaintStatus status,
+            Integer categoryId
+    );
+
+    // ================= REPORT METHODS =================
+
+    // 🥧 Pie Chart → Status Distribution
+    @Query("SELECT c.status, COUNT(c) FROM Complaint c GROUP BY c.status")
+    List<Object[]> countComplaintsByStatus();
+
+
+    // 📊 Bar Chart → Category-wise Complaints
+    @Query(value = "SELECT cat.name, COUNT(*) " +
+            "FROM complaints c " +
+            "JOIN categories cat ON c.category_id = cat.id " +
+            "GROUP BY cat.name",
+            nativeQuery = true)
+    List<Object[]> countComplaintsByCategory();
+
+
+    // 📈 Line Chart → Daily Trend
+    @Query(value = "SELECT DATE(created_at), COUNT(*) " +
+            "FROM complaints " +
+            "GROUP BY DATE(created_at) " +
+            "ORDER BY DATE(created_at)",
+            nativeQuery = true)
+    List<Object[]> countComplaintsByDate();
+
+
+    // 📅 Line Chart → Filtered Daily Trend
+    @Query(value = "SELECT DATE(created_at), COUNT(*) " +
+            "FROM complaints " +
+            "WHERE created_at BETWEEN :start AND :end " +
+            "GROUP BY DATE(created_at) " +
+            "ORDER BY DATE(created_at)",
+            nativeQuery = true)
+    List<Object[]> countComplaintsByDateRange(LocalDateTime start, LocalDateTime end);
+
+
+//    // 📆 Line Chart → Monthly Trend
+//    @Query(value = "SELECT DATE_FORMAT(created_at, '%Y-%m'), COUNT(*) " +
+//            "FROM complaints " +
+//            "GROUP BY DATE_FORMAT(created_at, '%Y-%m') " +
+//            "ORDER BY DATE_FORMAT(created_at, '%Y-%m')",
+//            nativeQuery = true)
+//    List<Object[]> countComplaintsMonthly();
+@Query("""
+SELECT FUNCTION('DATE', c.createdAt), COUNT(c)
+FROM Complaint c
+WHERE FUNCTION('MONTH', c.createdAt) = FUNCTION('MONTH', CURRENT_DATE)
+AND FUNCTION('YEAR', c.createdAt) = FUNCTION('YEAR', CURRENT_DATE)
+GROUP BY FUNCTION('DATE', c.createdAt)
+ORDER BY FUNCTION('DATE', c.createdAt)
+""")
+List<Object[]> countComplaintsDailyCurrentMonth();
 }

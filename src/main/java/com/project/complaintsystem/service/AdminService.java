@@ -5,8 +5,11 @@ import com.project.complaintsystem.model.Complaint;
 
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDateTime;
 
 public interface AdminService {
+
+    // ================= EXISTING METHODS =================
 
     // 📊 Dashboard Statistics
     Map<String, Long> getDashboardStatistics();
@@ -15,6 +18,23 @@ public interface AdminService {
     List<Complaint> getFilteredComplaints(ComplaintStatus status, Integer categoryId);
 
     // 📝 Add Remarks / Assign
-    // (Note: We reuse the robust logic we built in ComplaintService for this)
     Complaint processComplaint(Long complaintId, Long adminId, ComplaintStatus newStatus, String remarks);
+
+
+    // ================= REPORT METHODS =================
+
+    // 🥧 Pie Chart → Status Distribution
+    Map<String, Long> getComplaintStatusStats();
+
+    // 📊 Bar Chart → Category-wise Complaints
+    Map<String, Long> getCategoryStats();
+
+    // 📈 Line Chart → Daily Trends
+    Map<String, Long> getComplaintTrends();
+
+    // 📅 Line Chart → Filtered Daily Trends
+    Map<String, Long> getComplaintTrendsByDateRange(LocalDateTime start, LocalDateTime end);
+
+    // 📆 Line Chart → Monthly Trends
+    Map<String, Long> getDailyTrendsCurrentMonth();
 }

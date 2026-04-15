@@ -15,7 +15,9 @@
             <h2 class="fw-bold text-dark mb-1">
                 System Overview
             </h2>
-            <p class="text-muted">Welcome back, ${pageContext.request.userPrincipal.name}. Here is the current platform status.</p>
+            <p class="text-muted">
+                Welcome back, ${pageContext.request.userPrincipal.name}. Here is the current platform status.
+            </p>
         </div>
         <div class="col-md-4 text-md-end mt-3 mt-md-0">
             <a href="<c:url value='/admin/complaints'/>" class="btn btn-primary px-4 shadow-sm">
@@ -72,6 +74,7 @@
     <h5 class="fw-bold mb-3 text-secondary">System Controls</h5>
     <div class="row g-4">
 
+        <!-- Process Complaints -->
         <div class="col-md-6">
             <a href="<c:url value='/admin/complaints'/>" class="text-decoration-none">
                 <div class="card auth-card action-card p-4 h-100 shadow-sm d-flex flex-row align-items-center">
@@ -80,21 +83,26 @@
                     </div>
                     <div>
                         <h5 class="fw-bold text-dark mb-1">Process Complaints</h5>
-                        <p class="text-muted small mb-0">Review, assign, and update the status of citizen reports.</p>
+                        <p class="text-muted small mb-0">
+                            Review, assign, and update the status of citizen reports.
+                        </p>
                     </div>
                 </div>
             </a>
         </div>
 
+        <!-- Generate Reports (FIXED) -->
         <div class="col-md-6">
-            <a href="#" class="text-decoration-none" onclick="return false;">
+            <a href="<c:url value='/admin/reports'/>" class="text-decoration-none">
                 <div class="card auth-card action-card p-4 h-100 shadow-sm d-flex flex-row align-items-center">
                     <div class="icon-circle bg-secondary bg-opacity-10 text-secondary me-4 flex-shrink-0">
                         <i class="bi bi-file-earmark-bar-graph"></i>
                     </div>
                     <div>
-                        <h5 class="fw-bold text-dark mb-1">Generate Reports <span class="badge bg-secondary ms-2" style="font-size: 0.65rem;">Coming Soon</span></h5>
-                        <p class="text-muted small mb-0">Export system analytics and performance metrics as PDF/CSV.</p>
+                        <h5 class="fw-bold text-dark mb-1">Generate Reports</h5>
+                        <p class="text-muted small mb-0">
+                            Export system analytics and performance metrics as PDF/CSV.
+                        </p>
                     </div>
                 </div>
             </a>
