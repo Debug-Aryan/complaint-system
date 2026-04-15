@@ -3,27 +3,44 @@
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
 
-<jsp:include page="/WEB-INF/views/common/navbar.jsp" />
+<jsp:include page="/WEB-INF/views/common/navbar.jsp">
+    <jsp:param name="hideAuthButtons" value="true" />
+</jsp:include>
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="col-12 col-md-6 col-lg-4">
+<div class="container-fluid p-0">
+    <div class="row g-0 auth-viewport">
+        <!-- Left Side: Gradient/Branding -->
+        <div class="col-lg-6 d-none d-lg-flex bg-primary bg-gradient align-items-center justify-content-center text-white position-relative overflow-hidden">
+            <div class="text-center position-relative z-3 px-5">
+                <i class="bi bi-shield-check display-1 mb-4"></i>
+                <h1 class="fw-bold display-4 mb-3">Smart Complaint System</h1>
+                <p class="lead fw-light px-4">Experience a seamless, transparent, and secure way to resolve your issues.</p>
+            </div>
+            <!-- Decorative circles -->
+            <div class="position-absolute rounded-circle bg-white" style="width: 400px; height: 400px; top: -100px; left: -100px; opacity: 0.1; z-index: 0;"></div>
+            <div class="position-absolute rounded-circle bg-white" style="width: 600px; height: 600px; bottom: -200px; right: -200px; opacity: 0.1; z-index: 0;"></div>
+        </div>
 
-        <div class="card auth-card p-4">
-            <div class="card-body">
-                <div class="text-center mb-4">
-                    <i class="bi bi-shield-lock text-primary" style="font-size: 2.5rem;"></i>
-                    <h3 class="mt-2 fw-bold">Welcome Back</h3>
-                    <p class="text-muted small">Sign in to your account</p>
+        <!-- Right Side: Login Form -->
+        <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center bg-white shadow-lg py-5 px-3 px-sm-5 mx-auto">
+            <div class="w-100" style="max-width: 450px;">
+                <div class="text-center mb-5 d-lg-none">
+                    <i class="bi bi-shield-lock text-primary" style="font-size: 3.5rem;"></i>
                 </div>
+                
+                <h2 class="fw-bold mb-2">Welcome Back</h2>
+                <p class="text-muted mb-4 small">Please enter your details to sign in.</p>
 
                 <c:if test="${param.error != null}">
-                    <div class="alert alert-danger py-2 small rounded-3" role="alert">
-                        <i class="bi bi-exclamation-circle me-1"></i> Invalid email or password.
+                    <div class="alert alert-danger py-2 small rounded-3 d-flex align-items-center" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
+                        <div>Invalid email or password.</div>
                     </div>
                 </c:if>
                 <c:if test="${param.logout != null}">
-                    <div class="alert alert-success py-2 small rounded-3" role="alert">
-                        <i class="bi bi-check-circle me-1"></i> You have been logged out successfully.
+                    <div class="alert alert-success py-2 small rounded-3 d-flex align-items-center" role="alert">
+                        <i class="bi bi-check-circle-fill flex-shrink-0 me-2"></i>
+                        <div>You have been logged out successfully.</div>
                     </div>
                 </c:if>
 
@@ -33,27 +50,27 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     </c:if>
 
-                    <div class="mb-3">
-                        <label for="email" class="form-label small fw-semibold">Email address</label>
+                    <div class="form-floating mb-3">
                         <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required autofocus>
+                        <label for="email" class="text-muted">Email address</label>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="password" class="form-label small fw-semibold">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+                    <div class="form-floating mb-4">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                        <label for="password" class="text-muted">Password</label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 mb-3">Sign In</button>
+                    <button type="submit" class="btn btn-primary w-100 py-3 mb-4 fw-bold shadow-sm rounded-pill transition-all">Sign In</button>
 
                     <div class="text-center small">
                         <span class="text-muted">Don't have an account?</span>
-                        <a href="<c:url value='/register'/>" class="text-decoration-none fw-semibold">Register here</a>
+                        <a href="<c:url value='/register'/>" class="text-decoration-none fw-semibold ms-1">Create an account</a>
                     </div>
                 </form>
 
             </div>
         </div>
-        </div>
+    </div>
 </div>
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />
