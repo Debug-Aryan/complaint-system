@@ -11,6 +11,9 @@
 	<groupId>com.project</groupId>
 	<artifactId>complaint-system</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
+	<packaging>war</packaging>
+
 	<name>complaint-system</name>
 	<description>Smart Complaint System</description>
 
