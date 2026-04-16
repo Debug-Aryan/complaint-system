@@ -7,6 +7,7 @@ import com.project.complaintsystem.enums.ComplaintStatus;
 import com.project.complaintsystem.security.CustomUserDetails;
 import com.project.complaintsystem.service.AdminService;
 import com.project.complaintsystem.service.ComplaintService;
+import com.project.complaintsystem.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,10 +33,12 @@ public class AdminController {
 
     private final AdminService adminService;
     private final ComplaintService complaintService;
+    private final CategoryService categoryService;
 
-    public AdminController(AdminService adminService, ComplaintService complaintService) {
+    public AdminController(AdminService adminService, ComplaintService complaintService, CategoryService categoryService) {
         this.adminService = adminService;
         this.complaintService = complaintService;
+        this.categoryService = categoryService;
     }
 
     // ================= DASHBOARD =================
@@ -60,8 +63,28 @@ public class AdminController {
     // ================= COMPLAINT MANAGEMENT =================
 
     @GetMapping("/complaints")
-    public String manageComplaints(Model model) {
-        model.addAttribute("complaints", complaintService.getAllComplaints(null));
+    public String manageComplaints(
+            @RequestParam(required = false) List<Long> categoryIds,
+            @RequestParam(required = false) List<String> statuses,
+            Model model) {
+
+        List<Complaint> complaints;
+        if ((categoryIds != null && !categoryIds.isEmpty()) || (statuses != null && !statuses.isEmpty())) {
+            complaints = complaintService.getFilteredComplaints(categoryIds, statuses);
+        } else {
+            complaints = complaintService.getAllComplaints(null);
+        }
+
+        model.addAttribute("complaints", complaints);
+        model.addAttribute("categories", categoryService.getAllCategories());
+        
+        // Preserve selected filters in view
+        model.addAttribute("selectedCategories", categoryIds);
+        model.addAttribute("selectedStatuses", statuses);
+        
+        // Available statuses for filter
+        model.addAttribute("allStatuses", ComplaintStatus.values());
+
         return "admin/manage-complaints";
     }
 

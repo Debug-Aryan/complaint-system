@@ -17,10 +17,88 @@
             <p class="text-muted mb-0">Review, filter, and process citizen grievances in real-time.</p>
         </div>
         <div class="d-flex gap-2">
+            <!-- Filter Wrapper -->
+            <div class="position-relative">
+                <button id="filterDropdownBtn" class="btn btn-outline-primary shadow-sm px-3 py-2 rounded-pill fw-medium transition-all" type="button">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+
+                <!-- Floating Filter Panel -->
+                <div id="floatingFilterPanel" class="d-none bg-white p-3 rounded-3" style="position: absolute; top: calc(100% + 10px); right: 0; z-index: 1000; width: 280px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: calc(100vh - 150px); flex-direction: column;">
+                    <form method="get" action="<c:url value='/admin/complaints'/>" class="m-0 d-flex flex-column h-100">
+                        <!-- Search Bar (UI Only) -->
+                        <div class="mb-3">
+                            <input type="text" placeholder="Search filters..." class="form-control form-control-sm bg-light border-0 shadow-none py-2 px-3 rounded-3">
+                        </div>
+
+                        <hr class="mt-0 mb-2 border-light">
+
+                        <!-- Scrollable Accordion Content -->
+                        <div class="flex-grow-1 overflow-y-auto mb-3 pe-1 h-100" style="max-height: 250px;">
+                            <div class="accordion accordion-flush" id="filterAccordion">
+                                <!-- Category Filter -->
+                                <div class="accordion-item border-0 mb-1">
+                                    <h2 class="accordion-header" id="headingCategory">
+                                        <button class="accordion-button px-0 py-2 bg-transparent shadow-none fw-semibold text-dark rounded-0 collapsed border-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory" aria-expanded="false" aria-controls="collapseCategory" style="font-size: 0.95rem;">
+                                            Category
+                                        </button>
+                                    </h2>
+                                    <div id="collapseCategory" class="accordion-collapse collapse" aria-labelledby="headingCategory">
+                                        <div class="accordion-body px-0 pt-2 pb-2">
+                                            <div class="d-flex flex-column gap-2">
+                                                <c:forEach var="category" items="${categories}">
+                                                    <div class="form-check custom-checkbox mb-0">
+                                                        <input class="form-check-input shadow-none" type="checkbox" name="categoryIds" value="${category.id}" id="cat_${category.id}"
+                                                            ${not empty selectedCategories and selectedCategories.contains(category.id) ? 'checked' : ''}>
+                                                        <label class="form-check-label text-muted small" for="cat_${category.id}">
+                                                            ${category.name}
+                                                        </label>
+                                                    </div>
+                                                </c:forEach>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Status Filter -->
+                                <div class="accordion-item border-0">
+                                    <h2 class="accordion-header" id="headingStatus">
+                                        <button class="accordion-button px-0 py-2 bg-transparent shadow-none fw-semibold text-dark rounded-0 collapsed border-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStatus" aria-expanded="false" aria-controls="collapseStatus" style="font-size: 0.95rem;">
+                                            Status
+                                        </button>
+                                    </h2>
+                                    <div id="collapseStatus" class="accordion-collapse collapse" aria-labelledby="headingStatus">
+                                        <div class="accordion-body px-0 pt-2 pb-2">
+                                            <div class="d-flex flex-column gap-2">
+                                                <c:forEach var="status" items="${allStatuses}">
+                                                    <div class="form-check custom-checkbox mb-0">
+                                                        <input class="form-check-input shadow-none" type="checkbox" name="statuses" value="${status.name()}" id="status_${status}"
+                                                            ${not empty selectedStatuses and selectedStatuses.contains(status.name()) ? 'checked' : ''}>
+                                                        <label class="form-check-label text-muted small" for="status_${status}">
+                                                            ${status}
+                                                        </label>
+                                                    </div>
+                                                </c:forEach>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-3 border-top mt-auto bg-white">
+                            <button type="submit" class="btn btn-primary w-100 fw-medium shadow-sm py-2 rounded-3">Apply</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <a href="<c:url value='/admin/reports'/>" class="btn btn-light border bg-white shadow-sm text-dark px-3 py-2 rounded-pill fw-medium transition-all">
                 <i class="bi bi-file-earmark-bar-graph me-1"></i> Analytics
             </a>
-            <button class="btn btn-white border bg-white shadow-sm text-muted px-3 py-2 rounded-pill transition-all" onclick="window.location.reload();">
+            <c:url var="refreshUrl" value="/admin/complaints"/>
+            <button class="btn btn-white border bg-white shadow-sm text-muted px-3 py-2 rounded-pill transition-all" onclick="window.location.href='${refreshUrl}'">
                 <i class="bi bi-arrow-clockwise"></i> Refresh
             </button>
         </div>
@@ -158,6 +236,46 @@
 
 </div>
 
-<jsp:include page="/WEB-INF/views/common/footer.jsp" />
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const filterBtn = document.getElementById("filterDropdownBtn");
+    const filterPanel = document.getElementById("floatingFilterPanel");
+    
+    // Toggle Panel
+    filterBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        filterPanel.classList.toggle("d-none");
+    });
+    
+    // Create the text filter logic
+    const searchInput = filterPanel.querySelector('input[type="text"]');
+    searchInput.addEventListener("input", function(e) {
+        const text = e.target.value.toLowerCase();
+        const checkboxes = filterPanel.querySelectorAll('.form-check');
+        checkboxes.forEach(function(box) {
+            const label = box.querySelector('label').innerText.toLowerCase();
+            box.style.display = label.includes(text) ? '' : 'none';
+        });
+        
+        // ensure accordions are open to show search results
+        if(text.trim() !== "") {
+            document.querySelectorAll('.accordion-collapse').forEach(function(collapse) {
+                collapse.classList.add('show');
+            });
+            document.querySelectorAll('.accordion-button').forEach(function(btn) {
+                btn.classList.remove('collapsed');
+                btn.setAttribute("aria-expanded", "true");
+            });
+        }
+    });
+
+    // Close on outside click
+    document.addEventListener("click", function (e) {
+        if (!filterPanel.contains(e.target) && e.target !== filterBtn) {
+            filterPanel.classList.add("d-none");
+        }
+    });
+});
+</script>
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />

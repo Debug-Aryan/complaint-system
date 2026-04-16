@@ -83,6 +83,22 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
     @Override
+    public List<Complaint> getFilteredComplaints(List<Long> categoryIds, List<String> statuses) {
+        List<ComplaintStatus> statusEnumList = null;
+        if (statuses != null && !statuses.isEmpty()) {
+            statusEnumList = statuses.stream()
+                    .map(ComplaintStatus::valueOf)
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        
+        // If lists are passed as empty instead of null, let's treat them as null for query
+        List<Long> finalCategoryIds = (categoryIds == null || categoryIds.isEmpty()) ? null : categoryIds;
+        List<ComplaintStatus> finalStatuses = (statusEnumList == null || statusEnumList.isEmpty()) ? null : statusEnumList;
+        
+        return complaintRepository.findFilteredComplaints(finalCategoryIds, finalStatuses);
+    }
+
+    @Override
     @Transactional
     public Complaint updateComplaintStatus(Long complaintId, Long adminId, ComplaintStatus newStatus, String remarks) {
 

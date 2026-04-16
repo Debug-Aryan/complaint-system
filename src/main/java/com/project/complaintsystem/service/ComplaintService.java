@@ -20,6 +20,7 @@ public interface ComplaintService {
     // 🌐 Get All Complaints (Admin)
     List<Complaint> getAllComplaints(ComplaintStatus status);
     List<Complaint> getComplaintsByDateRange(LocalDateTime start, LocalDateTime end);
+    List<Complaint> getFilteredComplaints(List<Long> categoryIds, List<String> statuses);
 
     // 🔄 Update Complaint Status (Admin)
     Complaint updateComplaintStatus(Long complaintId, Long adminId, ComplaintStatus newStatus, String remarks);

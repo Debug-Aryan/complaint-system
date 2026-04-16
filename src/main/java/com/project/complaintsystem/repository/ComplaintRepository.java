@@ -30,6 +30,12 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
             Integer categoryId
     );
 
+    @Query("SELECT c FROM Complaint c WHERE " +
+           "(:categoryIds IS NULL OR c.category.id IN :categoryIds) AND " +
+           "(:statuses IS NULL OR c.status IN :statuses)")
+    List<Complaint> findFilteredComplaints(@org.springframework.data.repository.query.Param("categoryIds") List<Long> categoryIds, 
+                                           @org.springframework.data.repository.query.Param("statuses") List<ComplaintStatus> statuses);
+
     // ================= REPORT METHODS =================
 
     // 🥧 Pie Chart → Status Distribution
