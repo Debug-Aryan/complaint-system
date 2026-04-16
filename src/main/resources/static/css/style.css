@@ -6,7 +6,7 @@ body {
 }
 
 .auth-viewport {
-    min-height: calc(100vh - 96px); /* Adjust based on navbar height */
+    min-height: 100vh;
 }
 
 /* Sidebar Layout */

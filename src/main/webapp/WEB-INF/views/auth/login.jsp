@@ -3,12 +3,8 @@
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
 
-<jsp:include page="/WEB-INF/views/common/navbar.jsp">
-    <jsp:param name="hideAuthButtons" value="true" />
-</jsp:include>
-
 <div class="container-fluid p-0">
-    <div class="row g-0 auth-viewport">
+    <div class="row g-0 auth-viewport min-vh-100">
         <!-- Left Side: Gradient/Branding -->
         <div class="col-lg-6 d-none d-lg-flex bg-primary bg-gradient align-items-center justify-content-center text-white position-relative overflow-hidden">
             <div class="text-center position-relative z-3 px-5">
@@ -73,4 +69,6 @@
     </div>
 </div>
 
-<jsp:include page="/WEB-INF/views/common/footer.jsp" />
+<jsp:include page="/WEB-INF/views/common/footer.jsp">
+    <jsp:param name="hideAuthButtons" value="true" />
+</jsp:include>
