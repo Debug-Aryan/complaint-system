@@ -101,7 +101,7 @@
                     <div class="col-12">
                         <div class="auth-card p-4">
                             <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h6 class="text-muted text-uppercase tracking-wider small fw-bold mb-0">Monthly Complaint Trends</h6>
+                                <h6 class="text-muted text-uppercase tracking-wider small fw-bold mb-0">Daily Complaint Submissions</h6>
                                 <i class="bi bi-graph-up text-muted"></i>
                             </div>
                             <div class="chart-container main-line-chart">
