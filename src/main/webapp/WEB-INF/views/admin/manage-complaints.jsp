@@ -229,7 +229,7 @@
                         </table>
                     </div>
 
-                    <div class="pagination-container">
+                    <div class="pagination-container py-4">
                         <c:if test="${totalPages > 1}">
 
                             <c:if test="${currentPage > 0}">
