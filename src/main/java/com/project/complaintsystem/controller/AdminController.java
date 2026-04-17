@@ -29,6 +29,7 @@ import com.project.complaintsystem.model.Complaint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;   // ✅ FIXED IMPORT
+import jakarta.servlet.ServletOutputStream;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
