@@ -228,6 +228,56 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="pagination-container">
+                        <c:if test="${totalPages > 1}">
+
+                            <c:if test="${currentPage > 0}">
+                                <c:url var="prevUrl" value="/admin/complaints">
+                                    <c:param name="page" value="${currentPage - 1}" />
+                                    <c:param name="size" value="${size}" />
+                                    <c:forEach var="catId" items="${selectedCategories}">
+                                        <c:param name="categoryIds" value="${catId}" />
+                                    </c:forEach>
+                                    <c:forEach var="st" items="${selectedStatuses}">
+                                        <c:param name="statuses" value="${st}" />
+                                    </c:forEach>
+                                </c:url>
+                                <a href="${prevUrl}">Previous</a>
+                            </c:if>
+
+                            <c:forEach begin="0" end="${totalPages - 1}" var="i">
+                                <c:url var="pageUrl" value="/admin/complaints">
+                                    <c:param name="page" value="${i}" />
+                                    <c:param name="size" value="${size}" />
+                                    <c:forEach var="catId" items="${selectedCategories}">
+                                        <c:param name="categoryIds" value="${catId}" />
+                                    </c:forEach>
+                                    <c:forEach var="st" items="${selectedStatuses}">
+                                        <c:param name="statuses" value="${st}" />
+                                    </c:forEach>
+                                </c:url>
+                                <a href="${pageUrl}" class="${i == currentPage ? 'active-page' : ''}">
+                                    ${i + 1}
+                                </a>
+                            </c:forEach>
+
+                            <c:if test="${currentPage < totalPages - 1}">
+                                <c:url var="nextUrl" value="/admin/complaints">
+                                    <c:param name="page" value="${currentPage + 1}" />
+                                    <c:param name="size" value="${size}" />
+                                    <c:forEach var="catId" items="${selectedCategories}">
+                                        <c:param name="categoryIds" value="${catId}" />
+                                    </c:forEach>
+                                    <c:forEach var="st" items="${selectedStatuses}">
+                                        <c:param name="statuses" value="${st}" />
+                                    </c:forEach>
+                                </c:url>
+                                <a href="${nextUrl}">Next</a>
+                            </c:if>
+
+                        </c:if>
+                    </div>
                 </c:otherwise>
             </c:choose>
 

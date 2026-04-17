@@ -4,6 +4,7 @@ import com.project.complaintsystem.dto.ComplaintDTO;
 import com.project.complaintsystem.enums.ComplaintStatus;
 import com.project.complaintsystem.model.Complaint;
 import com.project.complaintsystem.model.ComplaintUpdate;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +22,13 @@ public interface ComplaintService {
     List<Complaint> getAllComplaints(ComplaintStatus status);
     List<Complaint> getComplaintsByDateRange(LocalDateTime start, LocalDateTime end);
     List<Complaint> getFilteredComplaints(List<Long> categoryIds, List<String> statuses);
+
+        Page<Complaint> getPaginatedComplaints(
+            List<Long> categoryIds,
+            List<String> statuses,
+            int page,
+            int size
+        );
 
     // 🔄 Update Complaint Status (Admin)
     Complaint updateComplaintStatus(Long complaintId, Long adminId, ComplaintStatus newStatus, String remarks);

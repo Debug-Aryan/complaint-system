@@ -230,3 +230,28 @@ body {
     border: 1px solid #eaeaea;
     margin-left: 50px;
 }
+
+/* Pagination (Manage Complaints) */
+.pagination-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination-container a {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 2px;
+    border-radius: 6px;
+    text-decoration: none;
+    background: var(--bs-gray-200);
+    color: var(--bs-body-color);
+}
+
+.pagination-container a:hover {
+    background: var(--bs-gray-300);
+}
+
+.pagination-container a.active-page {
+    background: var(--bs-primary);
+    color: var(--bs-white);
+}

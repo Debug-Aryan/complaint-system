@@ -14,6 +14,10 @@ import com.project.complaintsystem.repository.ComplaintUpdateRepository;
 import com.project.complaintsystem.repository.UserRepository;
 import com.project.complaintsystem.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +25,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ComplaintServiceImpl implements ComplaintService {
@@ -96,6 +102,42 @@ public class ComplaintServiceImpl implements ComplaintService {
         List<ComplaintStatus> finalStatuses = (statusEnumList == null || statusEnumList.isEmpty()) ? null : statusEnumList;
         
         return complaintRepository.findFilteredComplaints(finalCategoryIds, finalStatuses);
+    }
+
+    @Override
+    public Page<Complaint> getPaginatedComplaints(List<Long> categoryIds, List<String> statuses, int page, int size) {
+
+        int safePage = Math.max(page, 0);
+        int safeSize = size <= 0 ? 10 : Math.min(size, 100);
+
+        Pageable pageable = PageRequest.of(safePage, safeSize, Sort.by("createdAt").descending());
+
+        List<Long> finalCategoryIds = (categoryIds == null || categoryIds.isEmpty()) ? null : categoryIds;
+
+        List<ComplaintStatus> statusEnumList = null;
+        if (statuses != null && !statuses.isEmpty()) {
+            statusEnumList = statuses.stream()
+                    .filter(Objects::nonNull)
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .map(s -> {
+                        try {
+                            return ComplaintStatus.valueOf(s);
+                        } catch (IllegalArgumentException ex) {
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+
+        List<ComplaintStatus> finalStatuses = (statusEnumList == null || statusEnumList.isEmpty()) ? null : statusEnumList;
+
+        if (finalCategoryIds != null && finalStatuses != null) {
+            return complaintRepository.findByCategoryIdInAndStatusIn(finalCategoryIds, finalStatuses, pageable);
+        }
+
+        return complaintRepository.findFilteredComplaintsPage(finalCategoryIds, finalStatuses, pageable);
     }
 
     @Override

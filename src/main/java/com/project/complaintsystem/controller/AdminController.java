@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook; // ✅ ADDED SXSSFWorkbook IMPORT
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -78,16 +79,22 @@ public class AdminController {
     public String manageComplaints(
             @RequestParam(required = false) List<Long> categoryIds,
             @RequestParam(required = false) List<String> statuses,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
             Model model) {
 
-        List<Complaint> complaints;
-        if ((categoryIds != null && !categoryIds.isEmpty()) || (statuses != null && !statuses.isEmpty())) {
-            complaints = complaintService.getFilteredComplaints(categoryIds, statuses);
-        } else {
-            complaints = complaintService.getAllComplaints(null);
+        int safePage = Math.max(page, 0);
+        int safeSize = size <= 0 ? 10 : Math.min(size, 100);
+
+        Page<Complaint> complaintPage = complaintService.getPaginatedComplaints(categoryIds, statuses, safePage, safeSize);
+
+        // If the requested page is out of range (e.g., stale link), move to the last valid page.
+        if (safePage > 0 && complaintPage.getTotalPages() > 0 && safePage >= complaintPage.getTotalPages()) {
+            safePage = complaintPage.getTotalPages() - 1;
+            complaintPage = complaintService.getPaginatedComplaints(categoryIds, statuses, safePage, safeSize);
         }
 
-        model.addAttribute("complaints", complaints);
+        model.addAttribute("complaints", complaintPage.getContent());
         model.addAttribute("categories", categoryService.getAllCategories());
         
         // Preserve selected filters in view
@@ -96,6 +103,11 @@ public class AdminController {
         
         // Available statuses for filter
         model.addAttribute("allStatuses", ComplaintStatus.values());
+
+        model.addAttribute("currentPage", safePage);
+        model.addAttribute("totalPages", complaintPage.getTotalPages());
+        model.addAttribute("totalItems", complaintPage.getTotalElements());
+        model.addAttribute("size", safeSize);
 
         return "admin/manage-complaints";
     }

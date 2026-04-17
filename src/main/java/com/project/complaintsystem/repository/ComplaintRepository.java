@@ -2,6 +2,8 @@ package com.project.complaintsystem.repository;
 
 import com.project.complaintsystem.enums.ComplaintStatus;
 import com.project.complaintsystem.model.Complaint;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -35,6 +37,25 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
            "(:statuses IS NULL OR c.status IN :statuses)")
     List<Complaint> findFilteredComplaints(@org.springframework.data.repository.query.Param("categoryIds") List<Long> categoryIds, 
                                            @org.springframework.data.repository.query.Param("statuses") List<ComplaintStatus> statuses);
+
+    // ================= PAGINATION SUPPORT =================
+    Page<Complaint> findAll(Pageable pageable);
+
+    Page<Complaint> findByCategoryIdInAndStatusIn(List<Long> categoryIds, List<ComplaintStatus> statuses, Pageable pageable);
+
+    @Query(
+            value = "SELECT c FROM Complaint c WHERE " +
+                    "(:categoryIds IS NULL OR c.category.id IN :categoryIds) AND " +
+                    "(:statuses IS NULL OR c.status IN :statuses)",
+            countQuery = "SELECT COUNT(c) FROM Complaint c WHERE " +
+                    "(:categoryIds IS NULL OR c.category.id IN :categoryIds) AND " +
+                    "(:statuses IS NULL OR c.status IN :statuses)"
+    )
+    Page<Complaint> findFilteredComplaintsPage(
+            @org.springframework.data.repository.query.Param("categoryIds") List<Long> categoryIds,
+            @org.springframework.data.repository.query.Param("statuses") List<ComplaintStatus> statuses,
+            Pageable pageable
+    );
 
     // ================= REPORT METHODS =================
 
