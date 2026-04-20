@@ -19,7 +19,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Your Custom CSS -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css?v=1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css?v=2">
 
 </head>
 <body>

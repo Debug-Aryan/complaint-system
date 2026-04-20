@@ -19,7 +19,7 @@
 
         <!-- Right Side: Login Form -->
         <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center bg-white py-5 px-3 px-sm-5">
-            <div class="w-100 shadow-sm p-4 p-md-5 rounded-4" style="max-width: 450px; background: #fff;">
+            <div class="w-100 shadow-sm p-4 p-md-5 rounded-4" style="max-width: 450px;">
                 <div class="text-center mb-5 d-lg-none">
                     <i class="bi bi-shield-lock text-primary" style="font-size: 3.5rem;"></i>
                 </div>
