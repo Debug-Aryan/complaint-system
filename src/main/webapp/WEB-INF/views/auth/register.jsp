@@ -6,7 +6,7 @@
 <div class="container-fluid p-0">
     <div class="row g-0 auth-viewport min-vh-100">
         <!-- Left Side: Gradient/Branding -->
-        <div class="col-lg-6 d-none d-lg-flex bg-primary bg-gradient align-items-center justify-content-center text-white position-relative overflow-hidden">
+        <div class="col-md-6 d-none d-md-flex bg-primary bg-gradient align-items-center justify-content-center text-white position-relative overflow-hidden">
             <div class="text-center position-relative z-3 px-5">
                 <i class="bi bi-people-fill display-1 mb-4"></i>
                 <h1 class="fw-bold display-4 mb-3">Join Us Today</h1>
@@ -18,7 +18,7 @@
         </div>
 
         <!-- Right Side: Register Form -->
-        <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center bg-white shadow-lg py-5 px-3 px-sm-5 mx-auto">
+        <div class="col-12 col-md-6 d-flex align-items-center justify-content-center bg-white py-5 px-3 px-sm-5">
             <div class="w-100" style="max-width: 500px;">
                 <div class="text-center mb-4 d-lg-none">
                     <i class="bi bi-person-plus text-primary" style="font-size: 3.5rem;"></i>
