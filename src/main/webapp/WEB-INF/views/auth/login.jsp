@@ -3,10 +3,10 @@
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
 
-<div class="container-fluid p-0">
-    <div class="row g-0 auth-viewport min-vh-100">
+<div class="container-fluid p-0 m-0 w-100 vw-100">
+    <div class="row g-0 auth-viewport min-vh-100 w-100">
         <!-- Left Side: Gradient/Branding -->
-        <div class="col-md-6 d-none d-md-flex bg-primary bg-gradient align-items-center justify-content-center text-white position-relative overflow-hidden">
+        <div class="col-12 col-lg-6 d-none d-lg-flex bg-primary bg-gradient align-items-center justify-content-center text-white position-relative overflow-hidden">
             <div class="text-center position-relative z-3 px-5">
                 <i class="bi bi-shield-check display-1 mb-4"></i>
                 <h1 class="fw-bold display-4 mb-3">Smart Complaint System</h1>
@@ -18,8 +18,8 @@
         </div>
 
         <!-- Right Side: Login Form -->
-        <div class="col-12 col-md-6 d-flex align-items-center justify-content-center bg-white py-5 px-3 px-sm-5">
-            <div class="w-100" style="max-width: 450px;">
+        <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center bg-white py-5 px-3 px-sm-5">
+            <div class="w-100 shadow-sm p-4 p-md-5 rounded-4" style="max-width: 450px; background: #fff;">
                 <div class="text-center mb-5 d-lg-none">
                     <i class="bi bi-shield-lock text-primary" style="font-size: 3.5rem;"></i>
                 </div>
