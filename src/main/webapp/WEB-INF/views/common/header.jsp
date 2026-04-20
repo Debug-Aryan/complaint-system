@@ -23,3 +23,8 @@
 
 </head>
 <body>
+
+<!-- Global Loader Overlay -->
+<div id="globalLoader" class="loader-overlay d-none">
+    <div class="spinner"></div>
+</div>
