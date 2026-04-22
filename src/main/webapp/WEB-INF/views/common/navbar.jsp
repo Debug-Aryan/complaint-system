@@ -11,7 +11,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-3">
         <div class="container">
             <a class="navbar-brand fw-bold text-primary d-flex align-items-center" href="<c:url value='/'/>">
-                <i class="bi bi-shield-check me-2 fs-4"></i> Smart Complaint
+                <img src="<c:url value='/complaint_logo.png'/>" alt="Logo" class="me-2" style="width: 30px; height: 30px; object-fit: contain;"> Smart Complaint
             </a>
         </div>
     </nav>
@@ -26,9 +26,7 @@
         <!-- Sidebar -->
         <div class="sidebar-wrapper" id="sidebar">
             <a class="sidebar-brand fw-bold" href="<c:url value='/'/>">
-                <div class="bg-primary bg-opacity-10 text-primary rounded d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px;">
-                    <i class="bi bi-shield-check"></i>
-                </div>
+                <img src="<c:url value='/complaint_logo.png'/>" alt="Logo" class="me-2" style="width: 36px; height: 36px; object-fit: contain;">
                 <span>Smart Complaint</span>
             </a>
 

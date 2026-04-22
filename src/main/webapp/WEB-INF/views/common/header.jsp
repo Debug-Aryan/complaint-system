@@ -10,7 +10,7 @@
 
     <title>Smart Complaint System</title>
 
-    <link rel="icon" href="${pageContext.request.contextPath}/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="${pageContext.request.contextPath}/complaint_logo.png" type="image/x-icon">
 
     <!-- Bootstrap CSS (CDN) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
