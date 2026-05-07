@@ -1,6 +1,6 @@
 # Smart Complaint System
 
-Live site: https://complaint-system.up.railway.app/
+Live site: https://complaint-system.up.railway.app/login
 
 A Spring Boot web application for registering and tracking complaints, with separate dashboards for Citizens and Admins.
 
@@ -199,7 +199,7 @@ Note: tests load the Spring context and will require valid MySQL env vars + an a
 ## Deployment
 
 The live app is deployed on Railway:
-https://complaint-system.up.railway.app/
+https://complaint-system.up.railway.app/login
 
 Railway typically provides `PORT` and can provide MySQL connection env vars (or you can set them in the Railway service settings).
 
