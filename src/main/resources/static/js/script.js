@@ -33,6 +33,13 @@ window.addEventListener("load", function () {
     hideLoader();
 });
 
+// Hide loader when restored from back/forward cache (bfcache)
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+        hideLoader();
+    }
+});
+
 // For traditional form submissions
 document.addEventListener("submit", function () {
     showLoader();
